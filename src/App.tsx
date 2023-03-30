@@ -1,9 +1,11 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import anime from "animejs";
 import "./App.css";
+import { Prices } from "./models/Prices.interface";
+import { Sizes } from "./models/Sizes.inteface";
 
 function App() {
-  // referencias de los elementos
+  // referens the elements for animations
   const redShoe = useRef(null);
   const nike = useRef(null);
   const textSwipe = useRef(null);
@@ -12,7 +14,47 @@ function App() {
   const bagScale = useRef(null);
   const bagCuantity = useRef(null);
 
-  //cargar animaciones, al renderizar la app, por vez primera
+  // inicialized interface prices
+  const prices: Prices = {
+    UK6: "$29.00",
+    UK7: "$30.99",
+    UK8: "$31.78",
+    UK9: "$32.65",
+  };
+
+  // create state for prices
+  const [price, setPrice] = useState(prices.UK7);
+  const [elementoActivo, setElementoActivo] = useState(2);
+
+  // inicialized interface sizes
+  const sizes: Sizes[] = [
+    { id: 1, texto: "UK 6" },
+    { id: 2, texto: "UK 7" },
+    { id: 3, texto: "UK 8" },
+    { id: 4, texto: "UK 9" },
+  ];
+
+  // handleClick for change price
+  const handleClick = (elemento: Sizes) => {
+    setElementoActivo(elemento.id);
+
+    switch (elemento.id) {
+      case 1:
+        setPrice(prices.UK6);
+        break;
+      case 2:
+        setPrice(prices.UK7);
+        break;
+      case 3:
+        setPrice(prices.UK8);
+        break;
+      case 4:
+        setPrice(prices.UK9);
+        break;
+    }
+  };
+
+  //load animations, when rendering the app, for the first time
   useEffect(() => {
     anime({
       targets: nike.current,
@@ -66,7 +108,7 @@ function App() {
       ],
       loop: true,
     });
-  }, []);
+  }, [price]);
 
   return (
     <div className="App">
@@ -87,23 +129,23 @@ function App() {
         <div className="left">
           <div className="top">
             <span className="size">Size</span>
+
             <div className="variants-content">
-              <div className="variant">
-                <span>UK 6</span>
-              </div>
-              <div className="variant active">
-                <span>UK 7</span>
-              </div>
-              <div className="variant">
-                <span>UK 8</span>
-              </div>
-              <div className="variant">
-                <span>UK 9</span>
-              </div>
+              {sizes.map((size) => (
+                <div
+                  key={size.id}
+                  className={`variant ${
+                    size.id === elementoActivo ? "active" : ""
+                  }`}
+                  onClick={() => handleClick(size)}
+                >
+                  {size.texto}
+                </div>
+              ))}
             </div>
           </div>
           <div className="bottom">
-            <span className="price">$30.99</span>
+            <span className="price">{price}</span>
             <small>10% OFF</small>
           </div>
         </div>
